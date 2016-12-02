@@ -6,17 +6,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.alibaba.druid.sql.ast.expr.*;
+import org.nlpcn.es4sql.domain.KVValue;
+import org.nlpcn.es4sql.exception.SqlParseException;
+
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLObject;
+import com.alibaba.druid.sql.ast.expr.SQLAllColumnExpr;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
+import com.alibaba.druid.sql.ast.expr.SQLCharExpr;
+import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
+import com.alibaba.druid.sql.ast.expr.SQLNullExpr;
+import com.alibaba.druid.sql.ast.expr.SQLNumericLiteralExpr;
+import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
+import com.alibaba.druid.sql.ast.expr.SQLTextLiteralExpr;
+import com.alibaba.druid.sql.ast.expr.SQLValuableExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
 import com.alibaba.druid.sql.ast.statement.SQLJoinTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLTableSource;
 import com.alibaba.druid.sql.ast.statement.SQLUnionQuery;
-import org.nlpcn.es4sql.domain.Field;
-import org.nlpcn.es4sql.domain.KVValue;
-import org.nlpcn.es4sql.exception.SqlParseException;
-
-import com.alibaba.druid.sql.ast.*;
-
 
 public class Util {
     public static String joiner(List<KVValue> lists, String oper) {
@@ -76,7 +85,7 @@ public class Util {
         } else if (expr instanceof SQLValuableExpr) {
             value = ((SQLValuableExpr) expr).getValue();
         } else {
-            //throw new SqlParseException("can not support this type " + expr.getClass());
+//            throw new SqlParseException("can not support this type " + expr.getClass());
         }
         return value;
     }
@@ -101,7 +110,10 @@ public class Util {
             return ((SQLNumericLiteralExpr) expr).getNumber();
         } else if (expr instanceof SQLNullExpr ){
         	return ((SQLNullExpr) expr).toString().toLowerCase();
+        } else if (expr instanceof SQLBinaryOpExpr){
+            return getScriptValueWithQuote(((SQLBinaryOpExpr)expr).getLeft(),quote) + ((SQLBinaryOpExpr)expr).getOperator().getName() + getScriptValueWithQuote(((SQLBinaryOpExpr)expr).getRight(),quote).toString();
         }
+        
         throw new SqlParseException("could not parse sqlBinaryOpExpr need to be identifier/valuable got" + expr.getClass().toString() + " with value:" + expr.toString());
     }
 

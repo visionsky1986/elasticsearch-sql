@@ -17,10 +17,10 @@ import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
  */
 public class ScriptFilter {
     private String script;
-    private Map<String,Object> args;
+    private Map<String, Object> args;
     private ScriptService.ScriptType scriptType;
-    public ScriptFilter() {
 
+    public ScriptFilter() {
         args = null;
         scriptType = ScriptService.ScriptType.INLINE;
     }
@@ -60,10 +60,9 @@ public class ScriptFilter {
             SQLExpr right = binaryOpExpr.getRight();
             Object value = Util.expr2Object(right);
             String key = Util.extendedToString(binaryOpExpr.getLeft());
-            if(key.equals("script_type")){
+            if (key.equals("script_type")) {
                 parseAndUpdateScriptType(value.toString());
-            }
-            else {
+            } else {
                 args.put(key, value);
             }
 
@@ -73,21 +72,21 @@ public class ScriptFilter {
 
     private void parseAndUpdateScriptType(String scriptType) {
         String scriptTypeUpper = scriptType.toUpperCase();
-        switch(scriptTypeUpper){
-            case "INLINE":
-                this.scriptType = ScriptService.ScriptType.INLINE;
-                break;
-            case "INDEXED":
-                this.scriptType = ScriptService.ScriptType.INDEXED;
-                break;
-            case "FILE":
-                this.scriptType = ScriptService.ScriptType.FILE;
-                break;
+        switch (scriptTypeUpper) {
+        case "INLINE":
+            this.scriptType = ScriptService.ScriptType.INLINE;
+            break;
+        case "INDEXED":
+            this.scriptType = ScriptService.ScriptType.INDEXED;
+            break;
+        case "FILE":
+            this.scriptType = ScriptService.ScriptType.FILE;
+            break;
         }
     }
 
-    public boolean containsParameters(){
-        return args!=null && args.size() > 0;
+    public boolean containsParameters() {
+        return args != null && args.size() > 0;
     }
 
     public String getScript() {

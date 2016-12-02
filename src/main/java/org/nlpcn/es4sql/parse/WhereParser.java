@@ -58,8 +58,6 @@ public class WhereParser {
     }
 
     public void parseWhere(SQLExpr expr, Where where) throws SqlParseException {
-
-
         if (expr instanceof SQLBinaryOpExpr) {
             SQLBinaryOpExpr bExpr = (SQLBinaryOpExpr) expr;
             if (explanSpecialCondWithBothSidesAreLiterals(bExpr, where)) {
@@ -160,6 +158,11 @@ public class WhereParser {
         if (leftSide instanceof SQLMethodInvokeExpr) {
             return isAllowedMethodOnConditionLeft((SQLMethodInvokeExpr) leftSide, expr.getOperator());
         }
+        String operator=expr.getOperator().getName();
+        if(Sets.newHashSet("=", "<", ">", ">=", "<=","!=","<>").contains(operator)){
+            return true;
+        }
+        
         return leftSide instanceof SQLIdentifierExpr ||
                 leftSide instanceof SQLPropertyExpr ||
                 leftSide instanceof SQLVariantRefExpr;
@@ -244,6 +247,8 @@ public class WhereParser {
                     condition = new Condition(Where.CONN.valueOf(opear), soExpr.getLeft().toString(), soExpr.getLeft(), soExpr.getOperator().name, parseValue(soExpr.getRight()), soExpr.getRight(), childrenType);
                 else {
                     SQLMethodInvokeExpr sqlMethodInvokeExpr = parseSQLBinaryOpExprWhoIsConditionInWhere(soExpr);
+                    if(sqlMethodInvokeExpr==null)
+                        sqlMethodInvokeExpr = parseSQLBinaryOpExpr2ConditionInWhere(soExpr);
                     if (sqlMethodInvokeExpr == null) {
                         condition = new Condition(Where.CONN.valueOf(opear), soExpr.getLeft().toString(), soExpr.getLeft(), soExpr.getOperator().name, parseValue(soExpr.getRight()), soExpr.getRight(), null);
                     } else {
@@ -433,7 +438,6 @@ public class WhereParser {
     }
 
     private MethodField parseSQLMethodInvokeExprWithFunctionInWhere(SQLMethodInvokeExpr soExpr) throws SqlParseException {
-
         MethodField methodField = FieldMaker.makeMethodField(soExpr.getMethodName(),
                 soExpr.getParameters(),
                 null,
@@ -442,9 +446,83 @@ public class WhereParser {
                 false);
         return methodField;
     }
+    
+    //case a=b+c,a=b/2 and so on
+    private SQLMethodInvokeExpr parseSQLBinaryOpExpr2ConditionInWhere(SQLBinaryOpExpr soExpr) throws SqlParseException {
+        StringBuilder sb=parseSubSQLBinaryOpExpr2ConditionInWhere(soExpr);
+
+        String finalStr =sb.toString();
+
+        SQLMethodInvokeExpr scriptMethod = new SQLMethodInvokeExpr("script", null);
+        scriptMethod.addParameter(new SQLCharExpr(finalStr));
+        return scriptMethod;
+    }
+    
+    private StringBuilder parseSubSQLBinaryOpExpr2ConditionInWhere(SQLBinaryOpExpr soExpr) throws SqlParseException {
+        StringBuilder sb=new StringBuilder();
+        if (soExpr.getLeft() instanceof SQLIdentifierExpr || soExpr.getLeft() instanceof SQLPropertyExpr) {
+            sb.append("doc['" + Util.expr2Object(soExpr.getLeft(), "'") + "'].value");
+        }else if(soExpr.getLeft() instanceof SQLValuableExpr){
+            sb.append(  Util.expr2Object(soExpr.getLeft(), "'") );
+        }else if (soExpr.getLeft() instanceof SQLMethodInvokeExpr) {
+            throw new SqlParseException(
+                    String.format("can't parse SQLMethodInvokeExpr. expression value: %s", soExpr.toString()));
+        }else{
+            if (soExpr.getLeft() instanceof SQLBinaryOpExpr) {
+                sb.append("(");
+                sb.append(parseSubSQLBinaryOpExpr2ConditionInWhere((SQLBinaryOpExpr) soExpr.getLeft()));
+                sb.append(")");
+            }
+        }
+        
+        String operator = soExpr.getOperator().getName();
+       
+        if(Sets.newHashSet("=", "<", ">", ">=", "<=").contains(operator)){ 
+            if (operator.equals("=")) {
+                operator = "==";
+            }
+            sb.append(operator);
+        }else{
+            switch (soExpr.getOperator()) {
+                case Add:
+                    sb.append("+");
+                    break;
+                case Multiply:
+                    sb.append("*");
+                    break;
+                case Divide:
+                    sb.append("/");
+                    break;
+                case Modulus:
+                    sb.append("%");
+                    break;
+                case Subtract:
+                    sb.append("-");
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        
+        if (soExpr.getRight() instanceof SQLIdentifierExpr || soExpr.getRight() instanceof SQLPropertyExpr) {
+            sb.append("doc['" + Util.expr2Object(soExpr.getRight(), "'") + "'].value");
+        }else if(soExpr.getRight() instanceof SQLValuableExpr){
+            sb.append(Util.expr2Object(soExpr.getRight(), "'") );
+        }else if (soExpr.getLeft() instanceof SQLMethodInvokeExpr) {
+          throw new SqlParseException(
+                  String.format("can't parse SQLMethodInvokeExpr. expression value: %s", soExpr.toString()));
+        }else{
+            if (soExpr.getRight() instanceof SQLBinaryOpExpr) {
+                sb.append("(");
+                sb.append(parseSubSQLBinaryOpExpr2ConditionInWhere((SQLBinaryOpExpr) soExpr.getRight()));
+                sb.append(")");
+            }
+        }
+        return sb;
+    }
 
     private SQLMethodInvokeExpr parseSQLBinaryOpExprWhoIsConditionInWhere(SQLBinaryOpExpr soExpr) throws SqlParseException {
-
         if (!(soExpr.getLeft() instanceof SQLMethodInvokeExpr ||
                 soExpr.getRight() instanceof SQLMethodInvokeExpr)) {
             return null;
