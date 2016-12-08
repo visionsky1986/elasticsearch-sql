@@ -117,7 +117,7 @@ public class SQLFunctions {
             functionStr = field(Util.expr2Object((SQLExpr) paramers.get(0).value).toString());
             break;
         case "double":
-            functionStr = toDouble(Util.expr2Object((SQLExpr) paramers.get(0).value).toString());
+            functionStr = toDouble(Util.expr2Object((SQLExpr) paramers.get(0).value).toString(), name);
             break;
         case "todate":
             functionStr = toDate(Util.expr2Object((SQLExpr) paramers.get(0).value).toString(),
@@ -215,10 +215,16 @@ public class SQLFunctions {
         return new Tuple<String, String>(name, "def " + name + " = " + "doc['" + strColumn + "'].value");
     }
 
-    public static Tuple<String, String> toDouble(String strColumn) {
+    public static Tuple<String, String> toDouble(String strColumn, String valueName) {
         String name = "double_" + random();
-        return new Tuple<String, String>(name, "def " + name + " = 0; if(!doc['" + strColumn + "'].empty) " + name
-                + "=doc['" + strColumn + "'].value.toDouble()");
+        if (valueName == null) {
+            return new Tuple<String, String>(name, "def " + name + " = 0; if(!doc['" + strColumn + "'].empty) " + name
+                    + "=doc['" + strColumn + "'].value.toDouble()");
+        } else {
+            return new Tuple<String, String>(name,
+                    strColumn + "; def " + name + " = 0; if(" + valueName + "!=null) " + valueName + ".toDouble()");
+        }
+
     }
 
     public static Tuple<String, String> subtract(SQLExpr a, SQLExpr b) {
