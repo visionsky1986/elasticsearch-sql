@@ -1,0 +1,15 @@
+{
+  "from" : 0,
+  "size" : 200,
+  "_source" : {
+    "includes" : [ "cust_code" ],
+    "excludes" : [ ]
+  },
+  "script_fields" : {
+    "aa" : {
+      "script" : {
+        "inline" : "if((((doc['secu_trade_amt_360n_sum'].value/3)+doc['all_cash_bal'].value)+doc['fund_amt'].value)<((doc['secu_mkt_amt'].value+doc['all_cash_bal'].value)+doc['fund_amt'].value)){doc['secu_trade_amt_360n_sum'].value/3+doc['all_cash_bal'].value+doc['fund_amt'].value} else {doc['secu_mkt_amt'].value+doc['all_cash_bal'].value+doc['fund_amt'].value}"
+      }
+    }
+  }
+}

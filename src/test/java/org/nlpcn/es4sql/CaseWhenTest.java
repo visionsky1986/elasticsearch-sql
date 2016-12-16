@@ -35,7 +35,7 @@ public class CaseWhenTest {
     @Test
     public void query3() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
         String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/casewhen_explain3.json"), StandardCharsets.UTF_8).replaceAll("\r","");
-      String result = explain(String.format("SELECT case when (cust_subscribe_il-sub_time-fund_code-5150_last is not null or cust_subscribe_il-sub_time-fund_code-5151_last is not null or cust_subscribe_il-sub_time-fund_code-5152_last is not null) then '订阅' else '为订阅' end test,cust_code from custom", TEST_INDEX));
+        String result = explain(String.format("SELECT case when (cust_subscribe_il-sub_time-fund_code-5150_last is not null or cust_subscribe_il-sub_time-fund_code-5151_last is not null or cust_subscribe_il-sub_time-fund_code-5152_last is not null) then '订阅' else '为订阅' end test,cust_code from custom", TEST_INDEX));
         assertThat(result, equalTo(expectedOutput));
     }
     
@@ -43,6 +43,7 @@ public class CaseWhenTest {
     public void query4() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
         String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/casewhen_explain4.json"), StandardCharsets.UTF_8).replaceAll("\r","");
         String result = explain(String.format("select case when channel_id=1 then '线上' else '线下' end channel_id_line,open_date,edu from custom/job where  (cust_type between 0 and 4 and priv_plac is null and non_trade is null) group by channel_id_line, terms('field'='open_date','missing'='-999999999999','alias'='open_date','size'=10000 ), terms('field'='edu','missing'='','alias'='edu','size'=10000 ) order by channel_id_line desc,aaa  limit  5000 ", TEST_INDEX));
+        System.out.println(result);
         assertThat(result, equalTo(expectedOutput));
     }
     
@@ -50,7 +51,13 @@ public class CaseWhenTest {
     public void query5() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
         String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/casewhen_explain5.json"), StandardCharsets.UTF_8).replaceAll("\r","");
         String result = explain(String.format("select case when channel_id=1 then '线上' else '线下' end channel_id_line,open_date,edu from custom/job order by channel_id_line asc,aaa  limit  20 ", TEST_INDEX));
-        
+        assertThat(result, equalTo(expectedOutput));
+    }
+    
+    @Test
+    public void query6() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
+        String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/casewhen_explain6.json"), StandardCharsets.UTF_8).replaceAll("\r","");
+        String result = explain(String.format("SELECT cust_code,case when(secu_trade_amt_360n_sum/3+all_cash_bal+fund_amt) <(secu_mkt_amt+all_cash_bal+fund_amt) then  (secu_trade_amt_360n_sum/3+all_cash_bal+fund_amt)  else (secu_mkt_amt+all_cash_bal+fund_amt) end aa FROM custom ", TEST_INDEX));
         assertThat(result, equalTo(expectedOutput));
     }
 

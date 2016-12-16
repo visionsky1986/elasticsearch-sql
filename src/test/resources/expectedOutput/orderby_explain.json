@@ -1,0 +1,32 @@
+{
+  "from" : 0,
+  "size" : 0,
+  "_source" : {
+    "includes" : [ "cust_dt", "COUNT" ],
+    "excludes" : [ ]
+  },
+  "fields" : "cust_dt",
+  "sort" : [ {
+    "cust_dt" : {
+      "order" : "desc"
+    }
+  } ],
+  "aggregations" : {
+    "cust_dt" : {
+      "terms" : {
+        "field" : "cust_dt",
+        "size" : 5000,
+        "order" : {
+          "_count" : "desc"
+        }
+      },
+      "aggregations" : {
+        "COUNT(cust_code)" : {
+          "value_count" : {
+            "field" : "cust_code"
+          }
+        }
+      }
+    }
+  }
+}

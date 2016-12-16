@@ -1,0 +1,42 @@
+{
+  "from" : 0,
+  "size" : 200,
+  "query" : {
+    "bool" : {
+      "filter" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "must" : [ {
+                "range" : {
+                  "birth" : {
+                    "from" : 0,
+                    "to" : null,
+                    "include_lower" : false,
+                    "include_upper" : true
+                  }
+                }
+              }, {
+                "script" : {
+                  "script" : {
+                    "inline" : " def modulus_760708420 = doc['birth'].value % 10000;modulus_760708420 > 1207"
+                  }
+                }
+              }, {
+                "script" : {
+                  "script" : {
+                    "inline" : " def modulus_434765644 = doc['birth'].value % 10000;modulus_434765644 < 1215"
+                  }
+                }
+              } ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "_source" : {
+    "includes" : [ "cust_code", "birth" ],
+    "excludes" : [ ]
+  }
+}

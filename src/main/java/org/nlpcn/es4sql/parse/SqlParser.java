@@ -25,6 +25,7 @@ import com.alibaba.druid.sql.ast.SQLCommentHint;
 import com.alibaba.druid.sql.ast.SQLExpr;
 import com.alibaba.druid.sql.ast.SQLOrderBy;
 import com.alibaba.druid.sql.ast.SQLOrderingSpecification;
+import com.alibaba.druid.sql.ast.expr.SQLAggregateExpr;
 import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.druid.sql.ast.expr.SQLListExpr;
 import com.alibaba.druid.sql.ast.expr.SQLMethodInvokeExpr;
@@ -209,18 +210,11 @@ public class SqlParser {
             }
             String sortOrder = sqlSelectOrderByItem.getType().toString();
             
-//            String orderByName = FieldMaker.makeField(expr, null, null).toString();
-            String orderByName=expr.toString();
+            String orderByName = FieldMaker.makeField(expr, null, null).toString();
             
-            if(expr instanceof SQLMethodInvokeExpr && ((SQLMethodInvokeExpr)((SQLMethodInvokeExpr) expr)).getMethodName().equalsIgnoreCase("random")){
-                Script script=new Script("Math.random() * 10000");
-                select.addOrderBy(new Order("",script, "number", SortOrder.valueOf(sortOrder)));
-            }else{
-                 orderByName = orderByName.replace("`", "");
-                 if (alias != null) orderByName = orderByName.replaceFirst(alias + "\\.", "");
-                 select.addOrderBy(orderByName, SortOrder.valueOf(sortOrder));
-            }
-
+            orderByName = orderByName.replace("`", "");
+            if (alias != null) orderByName = orderByName.replaceFirst(alias + "\\.", "");
+            select.addOrderBy(orderByName, SortOrder.valueOf(sortOrder));
         }
     }
 
@@ -429,7 +423,6 @@ public class SqlParser {
     }
 
     private void removeAliasPrefix(Where where, String alias) {
-
         if (where instanceof Condition) {
             Condition cond = (Condition) where;
             String fieldName = cond.getName();

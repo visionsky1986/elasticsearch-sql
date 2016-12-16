@@ -82,6 +82,8 @@ public class Util {
             value = expr.toString();
         } else if (expr instanceof SQLAllColumnExpr) {
             value = "*";
+        } else if (expr instanceof SQLNullExpr ){
+            return ((SQLNullExpr) expr).toString().toLowerCase();
         } else if (expr instanceof SQLValuableExpr) {
             value = ((SQLValuableExpr) expr).getValue();
         } else {

@@ -44,6 +44,10 @@
     }
   },
   "sort" : [ {
+    "channel_id_line" : {
+      "order" : "desc"
+    }
+  }, {
     "aaa" : {
       "order" : "asc"
     }

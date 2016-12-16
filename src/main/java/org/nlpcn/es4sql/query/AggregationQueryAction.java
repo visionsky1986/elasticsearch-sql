@@ -156,7 +156,7 @@ public class AggregationQueryAction extends QueryAction {
                         case "KEY":
                             termsBuilder.order(Terms.Order.term(isASC(order)));
                             // add the sort to the request also so the results get sorted as well
-//                            request.addSort(order.getName(), order.getSortOrder());
+                            request.addSort(order.getName(), order.getSortOrder());
                             break;
                         case "FIELD":
                             termsBuilder.order(Terms.Order.aggregation(order.getName(), isASC(order)));

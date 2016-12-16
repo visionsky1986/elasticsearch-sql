@@ -247,7 +247,7 @@ public class WhereParser {
                     condition = new Condition(Where.CONN.valueOf(opear), soExpr.getLeft().toString(), soExpr.getLeft(), soExpr.getOperator().name, parseValue(soExpr.getRight()), soExpr.getRight(), childrenType);
                 else {
                     SQLMethodInvokeExpr sqlMethodInvokeExpr = parseSQLBinaryOpExprWhoIsConditionInWhere(soExpr);
-                    if(sqlMethodInvokeExpr==null)
+                    if(sqlMethodInvokeExpr==null&&(soExpr.getLeft() instanceof SQLBinaryOpExpr||soExpr.getRight() instanceof SQLBinaryOpExpr))
                         sqlMethodInvokeExpr = parseSQLBinaryOpExpr2ConditionInWhere(soExpr);
                     if (sqlMethodInvokeExpr == null) {
                         condition = new Condition(Where.CONN.valueOf(opear), soExpr.getLeft().toString(), soExpr.getLeft(), soExpr.getOperator().name, parseValue(soExpr.getRight()), soExpr.getRight(), null);
@@ -599,7 +599,6 @@ public class WhereParser {
     private Object[] parseValue(List<SQLExpr> targetList) throws SqlParseException {
         Object[] value = new Object[targetList.size()];
         for (int i = 0; i < targetList.size(); i++) {
-            value[i] = parseValue(targetList.get(i));
         }
         return value;
     }
