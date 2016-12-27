@@ -1,0 +1,28 @@
+{
+  "from" : 0,
+  "size" : 200,
+  "query" : {
+    "bool" : {
+      "filter" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "should" : {
+                "match" : {
+                  "cust_code" : {
+                    "query" : 184987575,
+                    "type" : "phrase"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_source" : {
+    "includes" : [ "cust_code" ],
+    "excludes" : [ ]
+  }
+}

@@ -1,8 +1,5 @@
 package org.nlpcn.es4sql;
 
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.expr.SQLQueryExpr;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.IndexNotFoundException;
@@ -17,13 +14,9 @@ import org.elasticsearch.search.highlight.HighlightField;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.nlpcn.es4sql.domain.Select;
 import org.nlpcn.es4sql.exception.SqlParseException;
 import org.nlpcn.es4sql.query.SqlElasticSearchRequestBuilder;
 
-import javax.naming.directory.SearchControls;
 import java.io.IOException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.text.ParseException;

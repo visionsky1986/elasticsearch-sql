@@ -80,8 +80,11 @@ public class AggregationTest {
     @Test
     public void sumWithScriptTestNoAlias() throws IOException, SqlParseException, SQLFeatureNotSupportedException {
         Aggregations result = query(String.format("SELECT SUM(balance + balance) FROM %s/account", TEST_INDEX));
-        Sum sum = result.get("SUM(script=script(balance + balance,doc('balance').value + doc('balance').value))");
-        assertThat(sum.getValue(), equalTo(25714837.0*2));
+        Set<String> keys= result.asMap().keySet();
+        for (String key : keys) {
+            assertThat(((InternalSum)result.asMap().get(key)).getValue(), equalTo(25714837.0*2));
+        }
+//        Sum sum = result.get("SUM(script=script(balance + balance,doc('balance').value + doc('balance').value))");
     }
 //
 //    @Test

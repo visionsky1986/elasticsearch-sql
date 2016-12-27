@@ -1,0 +1,44 @@
+{
+  "from" : 0,
+  "size" : 200,
+  "query" : {
+    "bool" : {
+      "filter" : {
+        "bool" : {
+          "must" : {
+            "bool" : {
+              "must" : [ {
+                "script" : {
+                  "script" : {
+                    "inline" : "doc['a'].value > doc['b'].value"
+                  }
+                }
+              }, {
+                "range" : {
+                  "cust_type" : {
+                    "from" : 0,
+                    "to" : 4,
+                    "include_lower" : true,
+                    "include_upper" : true
+                  }
+                }
+              }, {
+                "missing" : {
+                  "field" : "priv_plac"
+                }
+              }, {
+                "missing" : {
+                  "field" : "non_trade"
+                }
+              } ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "_source" : {
+    "includes" : [ "cust_code" ],
+    "excludes" : [ ]
+  }
+}

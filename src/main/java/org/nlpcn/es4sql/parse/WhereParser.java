@@ -119,7 +119,7 @@ public class WhereParser {
         //join is not support
         if ((bExpr.getLeft() instanceof SQLPropertyExpr || bExpr.getLeft() instanceof SQLIdentifierExpr) &&
                 (bExpr.getRight() instanceof SQLPropertyExpr || bExpr.getRight() instanceof SQLIdentifierExpr) &&
-                Sets.newHashSet("=", "<", ">", ">=", "<=").contains(bExpr.getOperator().getName()) &&
+                Sets.newHashSet("=", "<", ">", ">=", "<=","!=","<>").contains(bExpr.getOperator().getName()) &&
                 !Util.isFromJoinOrUnionTable(bExpr)
 
                 ) {
@@ -127,6 +127,8 @@ public class WhereParser {
             String operator = bExpr.getOperator().getName();
             if (operator.equals("=")) {
                 operator = "==";
+            } else if (operator.equals("<>")){
+                operator = "!=";
             }
 
             String leftProperty = Util.expr2Object(bExpr.getLeft()).toString();
@@ -250,6 +252,12 @@ public class WhereParser {
                     if(sqlMethodInvokeExpr==null&&(soExpr.getLeft() instanceof SQLBinaryOpExpr||soExpr.getRight() instanceof SQLBinaryOpExpr))
                         sqlMethodInvokeExpr = parseSQLBinaryOpExpr2ConditionInWhere(soExpr);
                     if (sqlMethodInvokeExpr == null) {
+                        if (explanSpecialCondWithBothSidesAreLiterals(soExpr, where)) {
+                            return;
+                        }
+                        if (explanSpecialCondWithBothSidesAreProperty(soExpr, where)) {
+                            return;
+                        }
                         condition = new Condition(Where.CONN.valueOf(opear), soExpr.getLeft().toString(), soExpr.getLeft(), soExpr.getOperator().name, parseValue(soExpr.getRight()), soExpr.getRight(), null);
                     } else {
                         ScriptFilter scriptFilter = new ScriptFilter();
@@ -477,9 +485,11 @@ public class WhereParser {
         
         String operator = soExpr.getOperator().getName();
        
-        if(Sets.newHashSet("=", "<", ">", ">=", "<=").contains(operator)){ 
+        if(Sets.newHashSet("=", "<", ">", ">=", "<=","!=","<>").contains(operator)){ 
             if (operator.equals("=")) {
                 operator = "==";
+            } else if (operator.equals("<>")){
+                operator = "!=";
             }
             sb.append(operator);
         }else{

@@ -45,7 +45,7 @@ public class SQLFunctionsTest {
     @Test
     public void functionFieldAliasAndGroupByAlias() throws Exception {
         String query = "SELECT " +
-                "floor(substring(address,0,3)*20) as key," +
+                "substring(address,0,3) as key," +
                 "sum(age) cvalue FROM " + TestsConstants.TEST_INDEX + "/account where address is not null " +
                 "group by key order by cvalue desc limit 10  ";
 
