@@ -161,13 +161,10 @@ public class FieldMaker {
                 return convertBinaryOperatorToMethod("add", expr);
             case Multiply:
                 return convertBinaryOperatorToMethod("multiply", expr);
-
             case Divide:
                 return convertBinaryOperatorToMethod("divide", expr);
-
             case Modulus:
                 return convertBinaryOperatorToMethod("modulus", expr);
-
             case Subtract:
                 return convertBinaryOperatorToMethod("subtract", expr);
             default:

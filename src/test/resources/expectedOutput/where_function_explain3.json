@@ -1,0 +1,23 @@
+{
+  "from" : 0,
+  "size" : 200,
+  "query" : {
+    "bool" : {
+      "filter" : {
+        "bool" : {
+          "must" : {
+            "script" : {
+              "script" : {
+                "inline" : "doc['cash_transfer_in_amt_7n_sum'].value != doc['cash_transfer_out_amt_7n_sum'].value"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "_source" : {
+    "includes" : [ "cust_code" ],
+    "excludes" : [ ]
+  }
+}

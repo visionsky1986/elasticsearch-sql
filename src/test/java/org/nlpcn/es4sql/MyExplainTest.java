@@ -47,6 +47,21 @@ public class MyExplainTest {
         assertThat(result, equalTo(expectedOutput));
     }
     
+    @Test
+    public void query5() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
+        String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/where_function_explain3.json"), StandardCharsets.UTF_8).replaceAll("\r","");
+        String result = explain(String.format("SELECT cust_code FROM custom where cash_transfer_in_amt_7n_sum<>cash_transfer_out_amt_7n_sum", TEST_INDEX));
+        assertThat(result, equalTo(expectedOutput));
+    }
+    
+    @Test
+    public void query7() throws IOException, SqlParseException, NoSuchMethodException, IllegalAccessException, SQLFeatureNotSupportedException, InvocationTargetException {
+        String expectedOutput = Files.toString(new File("src/test/resources/expectedOutput/where_function_explain3.json"), StandardCharsets.UTF_8).replaceAll("\r","");
+        String result = explain(String.format("SELECT cust_code,secu_transfer_in_amt+omm_in_amt+secu_trd_in_amt+cash_transfer_in_amt FROM custom", TEST_INDEX));
+        System.out.println(result);
+    }
+
+    
     private String explain(String sql) throws SQLFeatureNotSupportedException, SqlParseException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
 		SearchDao searchDao = MainTestSuite.getSearchDao();
         SqlElasticRequestBuilder requestBuilder = searchDao.explain(sql).explain();

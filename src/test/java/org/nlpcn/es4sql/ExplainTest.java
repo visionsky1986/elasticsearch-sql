@@ -35,7 +35,8 @@ public class ExplainTest {
 //      String result = explain(String.format("SELECT concat(birth,aaa,bbbb) ,cust_code  FROM custom where birth between 19900101 and 19910101", TEST_INDEX));
 //      String result = explain(String.format("SELECT length(toString(birth)) ,cust_code  FROM custom where birth between 19900101 and 19910101", TEST_INDEX));
 //      String result = explain(String.format("SELECT  cust_code,birth FROM custom where birth>0 and modulus(birth,10000) > 1207 and  modulus(birth,10000) <1215", TEST_INDEX));
-      String result = explain(String.format("SELECT cust_code FROM custom where cash_transfer_in_amt_7n_sum<>cash_transfer_out_amt_7n_sum", TEST_INDEX));
+//        String result = explain(String.format("SELECT cust_code FROM custom where cash_transfer_in_amt_7n_sum<>cash_transfer_out_amt_7n_sum", TEST_INDEX));
+      String result = explain(String.format("SELECT cust_code,secu_transfer_in_amt+omm_in_amt+secu_trd_in_amt+cash_transfer_in_amt FROM custom where cash_transfer_in_amt_7n_sum<>cash_transfer_out_amt_7n_sum", TEST_INDEX));
 //        String result = explain(String.format("SELECT test FROM myindex where secu_trade_amt_360n_sum/3 <secu_mkt_amt", TEST_INDEX));
         
         System.out.println(result);

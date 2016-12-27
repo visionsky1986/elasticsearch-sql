@@ -282,8 +282,8 @@ public class SQLFunctions {
         String newScript = variance[variance.length - 1];
         if (newScript.trim().startsWith("def ")) {
             // for now ,if variant is string,then change to double.
-            String temp = newScript.substring(4).split("=")[0].trim();
-            return " if( " + temp + " instanceof String) " + temp + "=" + temp.trim() + ".toDouble(); ";
+            String temp = newScript.trim().substring(4).split("=")[0].trim();
+            return " if(" + temp + " instanceof String) " + temp + "=" + temp.trim() + ".toDouble(); ";
         } else
             return "";
     }
