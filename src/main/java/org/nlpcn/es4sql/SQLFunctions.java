@@ -266,7 +266,7 @@ public class SQLFunctions {
         String newScript = variance[variance.length - 1];
         if (newScript.trim().startsWith("def ")) {
             // for now ,if variant is string,then change to double.
-            return newScript.substring(4).split("=")[0].trim();
+            return newScript.trim().substring(4).split("=")[0].trim();
         } else if (newScript.trim().startsWith("if")) {
             int start = newScript.indexOf(")");
             int end = newScript.indexOf("=");
